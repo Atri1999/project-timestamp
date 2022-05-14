@@ -24,6 +24,34 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
+const response=(req,res)=>{
+  if(isNaN(req.date.getTime())){
+    res.json({"error":"Invalid Date"})
+  }
+  else{
+    const utc=req.date.toUTCString()
+    const unix=Math.round(req.date.getTime())
+    res.json({"utc":utc,"unix":unix})
+  }
+  
+}
+
+app.get("/api/:date",(req,res,next)=>{
+  
+  req.date=new Date(req.params.date)
+  if(isNaN(req.date.getTime())){
+    req.date=new Date(parseInt(req.params.date))
+  }
+  
+  next()
+  
+},response)
+
+app.get("/api",(req,res,next)=>{
+  req.date=new Date()
+  next()
+},response)
+
 
 
 // listen for requests :)
